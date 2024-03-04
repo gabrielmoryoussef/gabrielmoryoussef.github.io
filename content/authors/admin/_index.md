@@ -1,13 +1,13 @@
 ---
 # Display name
-title: 吳健雄
+title: Gabriel Moryoussef
 
-# Name pronunciation (optional)
-name_pronunciation: Chien Shiung Wu
+# # Name pronunciation (optional)
+# name_pronunciation: Chien Shiung Wu
 
 # Full name (for SEO)
-first_name: Shiung Wu
-last_name: Chien
+first_name: Gabriel
+last_name: Moryoussef
 
 # Status emoji
 status:
@@ -17,34 +17,38 @@ status:
 superuser: true
 
 # Role/position/tagline
-role: Professor of Artificial Intelligence
+role: PhD Student in Statistics
 
 # Organizations/Affiliations to show in About widget
 organizations:
-  - name: Stanford University
-    url: https://www.stanford.edu/
+  - name: Carnegie Mellon University
+    url: https://www.cmu.edu/
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+# bio: My research interests include distributed robotics, mobile computing and programmable matter.
 
 # Interests to show in About widget
 interests:
-  - Artificial Intelligence
-  - Computational Linguistics
-  - Information Retrieval
+  - Statistical Theory
+  - Machine Learning
+  - Topological Data Analysis
+  - Natural Language Processing
 
 # Education to show in About widget
 education:
   courses:
-    - course: PhD in Artificial Intelligence
-      institution: Stanford University
-      year: 2012
-    - course: MEng in Artificial Intelligence
-      institution: Massachusetts Institute of Technology
-      year: 2009
-    - course: BSc in Artificial Intelligence
-      institution: Massachusetts Institute of Technology
-      year: 2008
+    - course: PhD in Statistics and Data Science
+      institution: Carnegie Mellon University
+      year: 2022
+    - course: MSc in Mathematics, Vision, Learning (MVA)
+      institution: Ecole Normale Supérieure Paris-Saclay
+      year: 2021
+    - course: MSc in Mathematical Sciences
+      institution: University of Oxford
+      year: 2020
+    - course: BSc in Mathematics
+      institution: Imperial College London
+      year: 2017
 
 # Skills
 # For available icons, see: https://docs.hugoblox.com/getting-started/page-builder/#icons
@@ -94,21 +98,15 @@ social:
   - icon: envelope
     icon_pack: fas
     link: '/#contact'
-  - icon: twitter
-    icon_pack: fab
-    link: https://twitter.com/GeorgeCushen
-    label: Follow me on Twitter
-    display:
-      header: true
-  - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
-    icon_pack: fas
-    link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
+  - icon: google-scholar # Alternatively, use `graduation-cap` icon from `fas` icon pack
+    icon_pack: ai
+    link: https://scholar.google.com/citations?user=kUQryMEAAAAJ&hl=en
   - icon: github
     icon_pack: fab
-    link: https://github.com/gcushen
+    link: https://github.com/gabrielmoryoussef
   - icon: linkedin
     icon_pack: fab
-    link: https://www.linkedin.com/
+    link: https://www.linkedin.com/in/gabriel-moryoussef-ab66a714a/
   # Link to a PDF of your resume/CV.
   # To use: copy your resume to `static/uploads/resume.pdf`, enable `ai` icons in `params.yaml`,
   # and uncomment the lines below.
@@ -120,5 +118,5 @@ social:
 highlight_name: true
 ---
 
-Chien Shiung Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Hi! My name is Gabriel and I am a second year PhD student in Statistics at [Carnegie Mellon University](https://www.cmu.edu/) where I am fortunate to be advised by [Prof. Jiashun Jin](https://www.stat.cmu.edu/~jiashun/). I am mainly interested in developping new statistical and machine learning methods for complex data such as texts and shapes. Prior starting my PhD, I received a Master from the Ecole Normale Supérieure and a Master from the University of Oxford advised by [Prof. Ulrike Tillmann](https://people.maths.ox.ac.uk/tillmann/), [Prof. Heather Harrington](https://www.maths.ox.ac.uk/people/heather.harrington), and [Prof. Agnese Barbensi](https://sites.google.com/view/agnesebarbensi/home) where I was interested in studying how persistent homology could be used to help understand knotted proteins. I am always interested in collaborating on new projects so feel free to reach out if you are interested in similar research topics. 
 {style="text-align: justify;"}
