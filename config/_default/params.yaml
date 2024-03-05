@@ -25,8 +25,8 @@ appearance:
 #     baidu_tongji: ''
 #     google_tag_manager: ''
 #     microsoft_clarity: ''
-#   verification:
-#     google: ''
+  verification:
+      google-site-verification: '<meta name="google-site-verification" content="HUVLvwDJZpYA6XaTQzMlkhcOKh2v7UzJmeXjiLxI6ng" />'
 #     baidu: ''
 
 # Site header
