@@ -19,8 +19,9 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository_owner != 'HugoBlox'
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,7 +56,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-          name: github-pages
 
   deploy:
     environment:
@@ -67,5 +67,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
-        with:
-          artifact_name: github-pages
