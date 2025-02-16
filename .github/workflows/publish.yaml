@@ -26,37 +26,36 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+      
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: ${{ env.WC_HUGO_VERSION }}
           extended: true
-
+      
       - uses: actions/cache@v4
         with:
           path: /tmp/hugo_cache_runner/
           key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.mod') }}
           restore-keys: |
             ${{ runner.os }}-hugomod-
-
+      
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
-
+      
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
         run: |
           hugo version
           hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}"
-          ls -la ./public  # Debugging to verify if public directory exists
-
+          ls -la ./public # Debugging to verify if public directory exists
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-          name: github-pages  # Explicitly set artifact name
 
   deploy:
     if: github.repository_owner != 'HugoBlox'
@@ -69,5 +68,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
-        with:
-          artifact_name: github-pages  # Ensure name matches the upload step
