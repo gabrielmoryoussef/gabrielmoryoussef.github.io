@@ -50,25 +50,14 @@ jobs:
         run: |
           hugo version
           hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}"
-          echo "Checking public directory contents:"
-          ls -la ./public
-          echo "Current working directory contents:"
-          ls -la
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-          
-      - name: List artifacts
-        run: |
-          echo "Listing artifacts directory:"
-          ls -la $GITHUB_WORKSPACE
-          echo "Checking runner workspace:"
-          ls -la $RUNNER_WORKSPACE
+          name: github-pages
 
   deploy:
-    if: github.repository_owner != 'HugoBlox'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -78,3 +67,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
+        with:
+          artifact_name: github-pages
