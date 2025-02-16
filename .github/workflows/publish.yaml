@@ -50,12 +50,22 @@ jobs:
         run: |
           hugo version
           hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}"
-          ls -la ./public # Debugging to verify if public directory exists
+          echo "Checking public directory contents:"
+          ls -la ./public
+          echo "Current working directory contents:"
+          ls -la
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
+          
+      - name: List artifacts
+        run: |
+          echo "Listing artifacts directory:"
+          ls -la $GITHUB_WORKSPACE
+          echo "Checking runner workspace:"
+          ls -la $RUNNER_WORKSPACE
 
   deploy:
     if: github.repository_owner != 'HugoBlox'
