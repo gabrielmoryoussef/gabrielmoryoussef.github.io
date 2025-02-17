@@ -11,7 +11,6 @@ publication_types: ["1"]  # "1" = Conference paper
 publication: "International Conference on Learning Representations (ICLR), 2024"
 abstract: "We propose an improved algorithm and establish new bounds for successive projection."
 featured: false
-url_pdf: "https://arxiv.org/abs/2403.11013"
 links:
 - name: "arXiv"
   url: "https://arxiv.org/abs/2403.11013"
