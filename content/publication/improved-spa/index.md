@@ -7,7 +7,7 @@ authors:
 - Jiajun Tang
 - Jingming Wang
 date: 2024-05-01  # Adjust based on the conference date
-publication_types: ["1"]  # "1" = Conference paper
+publication_types: ["1"] # "1" = Conference paper
 publication: "International Conference on Learning Representations (ICLR), 2024"
 abstract: "We propose an improved algorithm and establish new bounds for successive projection."
 featured: false
