@@ -1,0 +1,33 @@
+---
+/**
+ * Legacy Hugo URLs: /publication/<slug>/ → /publications/#<id>.
+ * GitHub Pages has no server-side redirects, so these are tiny static stubs.
+ */
+import { getPublications } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const pubs = await getPublications();
+  return pubs.flatMap((p) =>
+    [...new Set([...p.data.aliases, p.id])].map((slug) => ({ params: { slug }, props: { id: p.id } })),
+  );
+}
+
+const { id } = Astro.props;
+const target = `/publications/#${id}`;
+const abs = new URL(target, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={abs} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <script is:inline define:vars={{ target }}>location.replace(target);</script>
+  </head>
+  <body>
+    <p>This page has moved to <a href={target}>{abs}</a>.</p>
+  </body>
+</html>

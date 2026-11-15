@@ -1,0 +1,257 @@
+---
+import Icon from './Icon.astro';
+import { getPublications } from '@/lib/content';
+import { site } from '@/data/site';
+import { themeLabel } from '@/lib/content';
+
+const pubs = await getPublications();
+
+type Item = {
+  group: string;
+  label: string;
+  hint?: string;
+  href?: string;
+  action?: string;
+  external?: boolean;
+  /** Extra search terms, not displayed. */
+  terms?: string;
+};
+
+const items: Item[] = [
+  { group: 'Sections', label: 'Home', href: '/' },
+  { group: 'Sections', label: 'About', href: '/#about' },
+  { group: 'Sections', label: 'Research', href: '/#research' },
+  { group: 'Sections', label: 'Selected publications', href: '/#publications' },
+  { group: 'Sections', label: 'News', href: '/#news' },
+  { group: 'Sections', label: 'Education', href: '/#education' },
+  { group: 'Sections', label: 'Contact', href: '/#contact' },
+  { group: 'Sections', label: 'All publications', href: '/publications/' },
+  ...pubs.map((p) => ({
+    group: 'Papers',
+    label: p.data.title,
+    hint: p.data.venue,
+    href: `/publications/#${p.id}`,
+    terms: [p.data.authors.join(' '), p.data.venueFull ?? '', p.data.year, ...p.data.themes.map(themeLabel)].join(' '),
+  })),
+  { group: 'Links', label: 'CV (PDF)', href: site.links.cv, external: true },
+  { group: 'Links', label: 'Google Scholar', href: site.links.scholar, external: true },
+  { group: 'Links', label: 'GitHub', href: site.links.github, external: true },
+  { group: 'Links', label: 'LinkedIn', href: site.links.linkedin, external: true },
+  { group: 'Actions', label: 'Toggle color theme', action: 'theme' },
+];
+---
+
+<dialog class="cmdk" id="cmdk" aria-label="Jump to a section or paper">
+  <div class="cmdk__panel">
+    <div class="cmdk__search">
+      <Icon name="search" size={16} />
+      <input
+        class="cmdk__input"
+        type="text"
+        placeholder="Jump to a section or paper…"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="cmdk-list"
+        aria-autocomplete="list"
+        autocomplete="off"
+        spellcheck="false"
+        data-cmdk-input
+      />
+      <kbd class="cmdk__esc">esc</kbd>
+    </div>
+    <ul class="cmdk__list" id="cmdk-list" role="listbox" aria-label="Results" data-cmdk-list>
+      {
+        items.map((it, i) => (
+          <li
+            role="option"
+            id={`cmdk-opt-${i}`}
+            class="cmdk__item"
+            data-group={it.group}
+            data-href={it.href}
+            data-action={it.action}
+            data-external={it.external ? '' : undefined}
+            data-text={`${it.label} ${it.hint ?? ''} ${it.group} ${it.terms ?? ''}`.toLowerCase()}
+            aria-selected="false"
+          >
+            <span class="cmdk__group">{it.group}</span>
+            <span class="cmdk__label">{it.label}</span>
+            {it.hint && <span class="cmdk__hint">{it.hint}</span>}
+            {it.external && <Icon name="arrow-up-right" size={13} class="cmdk__ext" />}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="cmdk__empty" data-cmdk-empty hidden>No matches.</p>
+    <div class="cmdk__foot" aria-hidden="true">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .cmdk {
+    width: min(40rem, calc(100vw - 2rem));
+    max-height: min(32rem, calc(100svh - 6rem));
+    margin: 12vh auto auto;
+    padding: 0;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius-m);
+    background: var(--paper-sunk);
+    color: var(--ink);
+    box-shadow: var(--shadow-pop);
+    overflow: hidden;
+  }
+
+  .cmdk[open] {
+    display: flex;
+    animation: cmdk-in var(--dur-base) var(--ease-out);
+  }
+
+  .cmdk::backdrop {
+    background: color-mix(in srgb, var(--paper) 55%, transparent);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  @keyframes cmdk-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.985);
+    }
+  }
+
+  .cmdk__panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 0;
+  }
+
+  .cmdk__search {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-3);
+  }
+
+  .cmdk__input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: var(--step-0);
+    color: var(--ink);
+  }
+
+  .cmdk__input:focus-visible {
+    outline: none;
+  }
+
+  .cmdk__input::placeholder {
+    color: var(--ink-3);
+  }
+
+  kbd {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    line-height: 1;
+    padding: 0.2em 0.4em;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--ink-3);
+  }
+
+  .cmdk__list {
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    flex: 1;
+  }
+
+  .cmdk__item {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr) auto auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: var(--radius-s);
+    cursor: pointer;
+    color: var(--ink-2);
+  }
+
+  .cmdk__item[aria-selected='true'] {
+    background: var(--paper-raised);
+    color: var(--ink);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+
+  .cmdk__group {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-mono);
+    color: var(--ink-3);
+  }
+
+  .cmdk__label {
+    font-size: var(--step--1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cmdk__hint {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  .cmdk__item :global(.cmdk__ext) {
+    color: var(--ink-3);
+    align-self: center;
+  }
+
+  .cmdk__empty {
+    padding: 1.5rem 1rem;
+    color: var(--ink-3);
+    font-size: var(--step--1);
+  }
+
+  .cmdk__foot {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--ink-3);
+  }
+
+  .cmdk__foot kbd {
+    margin-right: 2px;
+  }
+
+  @media (max-width: 560px) {
+    .cmdk {
+      margin-top: 1rem;
+    }
+
+    .cmdk__item {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .cmdk__group,
+    .cmdk__hint {
+      display: none;
+    }
+
+    .cmdk__foot {
+      display: none;
+    }
+  }
+</style>

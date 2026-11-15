@@ -1,0 +1,289 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import { site } from '@/data/site';
+
+const links: { label: string; href: string; icon: IconName; email?: boolean }[] = [
+  { label: 'CV', href: site.links.cv, icon: 'cv' },
+  { label: 'Scholar', href: site.links.scholar, icon: 'scholar' },
+  { label: 'GitHub', href: site.links.github, icon: 'github' },
+  { label: 'LinkedIn', href: site.links.linkedin, icon: 'linkedin' },
+  { label: 'Email', href: '#contact', icon: 'mail', email: true },
+];
+---
+
+<section class="hero" data-hero aria-labelledby="hero-name">
+  <canvas class="hero__canvas" data-hero-canvas aria-hidden="true"></canvas>
+  <div class="wrap hero__inner">
+    <div class="hero__text">
+      <p class="eyebrow hero__eyebrow">
+        <span class="hero__dot" aria-hidden="true"></span>Statistics &amp; Data Science
+      </p>
+      <h1 class="hero__name" id="hero-name">
+        <span class="hero__first">Gabriel</span>
+        <span class="hero__last">Moryoussef</span>
+      </h1>
+      <div class="hero__meta">
+        <p class="hero__role">
+          {site.role}<br />
+          <a class="link" href={site.next.url} rel="noopener">{site.next.label}</a>
+        </p>
+        <p class="hero__statement">{site.statement}</p>
+        <ul class="hero__links" role="list">
+          {
+            links.map((l) => (
+              <li>
+                {l.email ? (
+                  <a
+                    class="hero__link"
+                    href={l.href}
+                    data-email
+                    data-u={site.email.user}
+                    data-d={site.email.domain}
+                    aria-label="Email"
+                  >
+                    <Icon name={l.icon} size={17} />
+                    <span>{l.label}</span>
+                  </a>
+                ) : (
+                  <a
+                    class="hero__link"
+                    href={l.href}
+                    rel={l.href.startsWith('http') ? 'noopener me' : undefined}
+                    aria-label={l.label === 'CV' ? 'CV (PDF)' : l.label}
+                  >
+                    <Icon name={l.icon} size={17} />
+                    <span>{l.label}</span>
+                  </a>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <figure class="hero__fig" aria-hidden="true">
+      <figcaption>
+        <span class="hero__fig-label">Fig. 1</span>
+        Noisy observations resolve into a simplex; its vertices are found, then lost again. Rare signals in{' '}
+        <span class="hero__accent-word">vermilion</span>.
+        <span class="hero__hud" data-hero-hud>n = — · ε = — · K = 3</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import { mountHero } from '@/scripts/hero';
+
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+  const host = document.querySelector<HTMLElement>('[data-hero]');
+  if (canvas && host) {
+    const go = () =>
+      mountHero(canvas, {
+        host,
+        hud: document.querySelector<HTMLElement>('[data-hero-hud]'),
+        text: document.querySelector<HTMLElement>('.hero__text'),
+      });
+    // Let the headline paint first; the figure is decoration.
+    if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 600 });
+    else setTimeout(go, 120);
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(36rem, calc(100svh - var(--nav-h) - 1rem), 64rem);
+    display: flex;
+    margin-top: calc(-1 * (var(--nav-h) + 1rem));
+    padding-top: calc(var(--nav-h) + 1rem);
+    overflow: hidden;
+  }
+
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-out);
+  }
+
+  .hero__canvas:global(.is-ready) {
+    opacity: 1;
+  }
+
+  .hero__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--col-gap);
+    align-content: end;
+    padding-block: var(--space-xl) var(--space-xl);
+  }
+
+  .hero__text {
+    grid-column: 1 / -1;
+  }
+
+  /* Narrow screens: reserve a band above the headline for the figure. */
+  @media (max-width: 719px) {
+    .hero__inner {
+      padding-top: clamp(13rem, 36svh, 19rem);
+    }
+  }
+
+  .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: var(--space-m);
+  }
+
+  .hero__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  .hero__name {
+    font-size: var(--step-hero);
+    line-height: 0.88;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+    margin-left: -0.04em;
+    text-wrap: initial;
+  }
+
+  .hero__name span {
+    display: block;
+  }
+
+  .hero__last {
+    font-style: italic;
+    padding-left: 0.5em;
+  }
+
+  .hero__meta {
+    display: grid;
+    gap: var(--space-m);
+    margin-top: var(--space-l);
+    max-width: 34rem;
+  }
+
+  .hero__role {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-mono);
+    line-height: 1.7;
+    color: var(--ink-2);
+  }
+
+  .hero__role .link {
+    color: var(--ink-2);
+  }
+
+  .hero__statement {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.22;
+    color: var(--ink);
+    max-width: 26ch;
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: var(--space-2xs) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hero__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding-inline: 0.8rem 0.9rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--paper) 70%, transparent);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-mono);
+    color: var(--ink-2);
+    transition:
+      color var(--dur-fast),
+      border-color var(--dur-fast),
+      background-color var(--dur-fast),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .hero__link:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    background: var(--paper);
+    transform: translateY(-1px);
+  }
+
+  .hero__fig {
+    display: none;
+  }
+
+  .hero__fig-label {
+    color: var(--ink);
+    margin-right: 0.35em;
+  }
+
+  .hero__accent-word {
+    color: var(--accent);
+  }
+
+  .hero__hud {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 720px) {
+    .hero__text {
+      grid-column: 1 / span 9;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .hero__text {
+      grid-column: 1 / span 7;
+    }
+
+    .hero__fig {
+      display: block;
+      grid-column: 9 / -1;
+      align-self: end;
+      font-family: var(--font-mono);
+      font-size: var(--step--2);
+      letter-spacing: var(--tracking-mono);
+      line-height: 1.6;
+      color: var(--ink-2);
+      border-top: 1px solid var(--rule);
+      padding-top: var(--space-xs);
+      max-width: 24rem;
+      justify-self: end;
+    }
+  }
+
+  @media print {
+    .hero__canvas,
+    .hero__fig {
+      display: none;
+    }
+  }
+</style>

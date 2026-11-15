@@ -1,0 +1,29 @@
+---
+/** The site mark: a 2-simplex with its vertices found — one of them, the signal, in accent. */
+interface Props {
+  size?: number;
+  /** Morph between pages with a view transition (only one instance per page may set this). */
+  morph?: boolean;
+}
+const { size = 20, morph = false } = Astro.props;
+---
+
+<svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" focusable="false" class:list={["mark", { "mark--morph": morph }]}>
+  <path d="M12 3.2 21 19.2H3z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" opacity="0.55"></path>
+  <circle cx="10.6" cy="13.4" r="0.9" fill="currentColor" opacity="0.45"></circle>
+  <circle cx="13.9" cy="15.2" r="0.9" fill="currentColor" opacity="0.45"></circle>
+  <circle cx="12.1" cy="10.4" r="0.9" fill="currentColor" opacity="0.45"></circle>
+  <circle cx="3" cy="19.2" r="2.1" fill="currentColor"></circle>
+  <circle cx="21" cy="19.2" r="2.1" fill="currentColor"></circle>
+  <circle cx="12" cy="3.2" r="2.4" fill="var(--accent)"></circle>
+</svg>
+
+<style>
+  .mark {
+    overflow: visible;
+  }
+
+  .mark--morph {
+    view-transition-name: site-mark;
+  }
+</style>

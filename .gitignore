@@ -1,10 +1,16 @@
-# IDEs
-.idea/
-
-# Hugo
-resources/
-public/
-jsconfig.json
+# build output
+dist/
+.astro/
 node_modules/
-go.sum
-.hugo_build.lock
+
+# logs & env
+npm-debug.log*
+.env*
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# local verification artifacts
+.verify/

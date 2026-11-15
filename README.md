@@ -1,50 +1,85 @@
-# [Hugo Academic CV Theme](https://github.com/HugoBlox/theme-academic-cv)
+# gabrielmoryoussef.github.io
 
-[![Screenshot](./preview.png)](https://hugoblox.com/templates/)
+Personal academic site of Gabriel Moryoussef. Built with [Astro](https://astro.build), fully static, and deployed to GitHub Pages by GitHub Actions on every push to `main`.
 
-The Hugo **Academic Resumé Template** empowers you to easily create your job-winning online resumé, showcase your academic publications, and create online courses or knowledge bases to grow your audience.
+## Develop
 
-[![Get Started](https://img.shields.io/badge/-Get%20started-ff4655?style=for-the-badge)](https://hugoblox.com/templates/)
-[![Discord](https://img.shields.io/discord/722225264733716590?style=for-the-badge)](https://discord.com/channels/722225264733716590/742892432458252370/742895548159492138)  
-[![Twitter Follow](https://img.shields.io/twitter/follow/GetResearchDev?label=Follow%20on%20Twitter)](https://twitter.com/GetResearchDev)
+Requires Node ≥ 22.23.4 (see `.nvmrc`).
 
-️**Trusted by 250,000+ researchers, educators, and students.** Highly customizable via the integrated **no-code, Hugo Blox Builder**, making every site truly personalized ⭐⭐⭐⭐⭐
+```sh
+npm install
+npm run dev       # http://localhost:4321
+npm run build     # static output in dist/
+npm run preview   # serve dist/
+```
 
-Easily write technical content with plain text Markdown, LaTeX math, diagrams, RMarkdown, or Jupyter, and import publications from BibTeX.
+## Add a paper
 
-[Check out the latest demo](https://academic-demo.netlify.app/) of what you'll get in less than 10 minutes, or [get inspired by our academics and research groups](https://hugoblox.com/creators/).
+Create one Markdown file in `src/content/publications/`. The file name becomes the paper's anchor (`/publications/#<file-name>`). The body of the file is the abstract.
 
-The integrated [**Hugo Blox Builder**](https://hugoblox.com) and CMS makes it easy to create a beautiful website for free. Edit your site in the CMS (or your favorite editor), generate it with [Hugo](https://github.com/gohugoio/hugo), and deploy with GitHub or Netlify. Customize anything on your site with widgets, light/dark themes, and language packs.
+```md
+---
+title: "Paper Title"
+authors: ["A. Coauthor", "G. Moryoussef"]   # your name is bolded automatically
+year: 2027
+date: 2027-03-01            # orders papers within a year
+venue: "AoS"                # short label for the badge
+venueFull: "Annals of Statistics"
+status: under-review        # published | accepted | to-appear | under-review | preprint
+themes: [rare-signals]      # rare-signals | latent-structure | ranking | llm | topology
+featured: false             # true → also listed on the home page
+links:                      # all optional: pdf, arxiv, code, doi, openreview, journal
+  arxiv: https://arxiv.org/abs/XXXX.XXXXX
+  pdf: https://arxiv.org/pdf/XXXX.XXXXX
+bibtex: |
+  @article{key,
+    title = {...},
+  }
+---
 
-- 👉 [**Get Started**](https://hugoblox.com/templates/)
-- 📚 [View the **documentation**](https://docs.hugoblox.com/)
-- 💬 [Chat with the **Hugo Blox Builder community**](https://discord.gg/z8wNYzb) or [**Hugo community**](https://discourse.gohugo.io)
-- 🐦 Twitter: [@GetResearchDev](https://twitter.com/GetResearchDev) [@GeorgeCushen](https://twitter.com/GeorgeCushen) [#MadeWithHugoBlox](https://twitter.com/search?q=%23MadeWithHugoBlox&src=typed_query)
-- ⬇️ **Automatically import your publications from BibTeX** with the [Hugo Academic CLI](https://github.com/GetRD/academic-file-converter)
-- 💡 [Suggest an improvement](https://github.com/HugoBlox/hugo-blox-builder/issues)
-- ⬆️ **Updating?** View the [Update Guide](https://docs.hugoblox.com/reference/update/) and [Release Notes](https://github.com/HugoBlox/hugo-blox-builder/releases)
+Abstract goes here. Leave it empty and the Abstract button is hidden.
+```
 
-## We ask you, humbly, to support this open source movement
+The schema in `src/content.config.ts` is checked at build time, so a typo in a field fails the build with a clear error. Files whose names start with `_` are ignored; `_sequential-hc.md` is a placeholder for the e-HC paper.
 
-Today we ask you to defend the open source independence of the Hugo Blox Builder and themes 🐧
+## Add a news item
 
-We're an open source movement that depends on your support to stay online and thriving, but 99.9% of our creators don't give; they simply look the other way.
+Add an entry at the top of `src/content/news.yaml`:
 
-### [❤️ Click here to become a GitHub Sponsor, unlocking awesome perks such as _exclusive academic templates and widgets_](https://github.com/sponsors/gcushen)
+```yaml
+- id: some-unique-id
+  date: 2027-02-01        # sort key
+  label: Feb 2027         # optional; defaults to "Mon YYYY"
+  text: Gave a talk at [Some Seminar](https://example.com).
+```
 
-<p align="center"><a href="https://hugoblox.com/templates/" target="_blank" rel="noopener"><img src="https://hugoblox.com/uploads/readmes/academic_logo_200px.png" alt="Hugo Academic Theme for Hugo Blox Builder"></a></p>
+The home page shows the latest 5 items. Items dated in the future get an "Upcoming" badge.
 
-## Demo image credits
+## Other edits
 
-- [Unsplash](https://unsplash.com)
+| What | Where |
+|---|---|
+| Name, role, links, email, location, research themes, education | `src/data/site.ts` |
+| Bio | `src/pages/index.astro` (About section) |
+| CV | replace `public/uploads/resume.pdf` (keep the path; old links point to it) |
+| Colors, type scale, spacing, motion | `src/styles/tokens.css` |
+| Hero figure | `src/scripts/hero-engine.ts` |
 
-## Latest news
+In January 2027, drop "Incoming" from `site.next.label` and change `site.location` in `src/data/site.ts`.
 
-<!--START_SECTION:news-->
+## How it's built
 
-- [Easily make an academic CV website to get more cites and grow your audience 🚀](https://hugoblox.com/blog/easily-make-academic-website/)
-- [What&#39;s new in v5.2?](https://hugoblox.com/blog/whats-new-in-v5.2/)
-- [What&#39;s new in v5.1?](https://hugoblox.com/blog/whats-new-in-v5.1/)
-- [Version 5.0 (February 2021)](https://hugoblox.com/blog/version-5.0-february-2021/)
-- [Version 5.0 Beta 3 (February 2021)](https://hugoblox.com/blog/version-5.0-beta-3-february-2021/)
-<!--END_SECTION:news-->
+- **Content:** typed Astro content collections (zod schemas). One file per paper; news is a single YAML file.
+- **Styling:** hand-written CSS on a single token file. The fonts (Instrument Serif, Inter, JetBrains Mono) are self-hosted through Fontsource.
+- **Client JS (~20 KB total):**
+  - the hero canvas, rendered in a Web Worker via `OffscreenCanvas`, with a main-thread fallback
+  - the theme toggle
+  - the ⌘K palette
+  - publication filters, BibTeX copy and abstract toggles
+  - scroll reveals
+- **Page transitions:** native cross-document View Transitions, with no client router.
+- **Generated at build time:**
+  - the OG image, `og.png` (satori + resvg)
+  - the favicons and app icons, from the same simplex motif
+  - the sitemap
+- **Old URLs:** `/publication/<slug>/` pages from the Hugo site redirect to `/publications/#<id>` (aliases are listed in each paper's `aliases` field).

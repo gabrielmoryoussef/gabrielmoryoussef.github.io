@@ -1,0 +1,50 @@
+---
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+---
+
+<Base title="Not found" noindex>
+  <section class="nf wrap">
+    <p class="eyebrow">Error 404 · p &lt; 0.001</p>
+    <h1 class="nf__title">This page is a<br /><em>rare event.</em></h1>
+    <p class="nf__text">
+      We looked everywhere and found no signal. It may have moved when the site was rebuilt.
+    </p>
+    <div class="nf__links">
+      <a class="arrow-link" href="/">Home <Icon name="arrow" /></a>
+      <a class="arrow-link" href="/publications/">Publications <Icon name="arrow" /></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 70svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-m);
+    padding-block: var(--space-2xl);
+  }
+
+  .nf__title {
+    font-size: var(--step-hero);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+  }
+
+  .nf__title em {
+    color: var(--accent);
+  }
+
+  .nf__text {
+    max-width: 42ch;
+    color: var(--ink-2);
+    font-size: var(--step-1);
+  }
+
+  .nf__links {
+    display: flex;
+    gap: var(--space-l);
+  }
+</style>

@@ -1,0 +1,34 @@
+# Newest first. `date` is the sort key; `label` is what is displayed (optional).
+# Items dated after the build date are shown as "Upcoming".
+# Set `draft: true` to hide an item.
+
+- id: voleon-mrs
+  date: 2027-01-01
+  label: Jan 2027
+  text: Joining the [Voleon Group](https://voleon.com) as a Member of Research Staff.
+
+- id: neurips-2026-presenting
+  date: 2026-12-01
+  label: Dec 2026
+  text: Presenting our multiclass Higher Criticism paper at NeurIPS 2026 in Sydney.
+
+- id: phd-defense
+  date: 2026-11-01 # CONFIRM exact month
+  label: Nov 2026
+  text: Defended my PhD thesis, “Statistical Methods for High-Dimensional Data with Rare Signals and Latent Structure.”
+
+- id: neurips-2026-accepted
+  date: 2026-09-15 # CONFIRM — sort key only; label shows the year
+  label: "2026"
+  text: “Multiclass Classification with Rare Useful Features” accepted at NeurIPS 2026.
+
+- id: voleon-internship
+  date: 2026-05-15
+  label: Summer 2026
+  text: Quantitative research internship at the Voleon Group, Berkeley.
+
+- id: wmw-submitted
+  date: 2025-06-01 # TODO real date
+  label: TODO
+  text: “When Machines Write” submitted to Statistical Science.
+  draft: true

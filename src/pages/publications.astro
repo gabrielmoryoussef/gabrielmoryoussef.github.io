@@ -1,0 +1,388 @@
+---
+import Base from '@/layouts/Base.astro';
+import PubRow from '@/components/PubRow.astro';
+import { themes, site } from '@/data/site';
+import { getPublications, statusGroup } from '@/lib/content';
+
+const pubs = await getPublications();
+const years = [...new Set(pubs.map((p) => p.data.year))].sort((a, b) => b - a);
+const themeCounts = Object.fromEntries(
+  themes.map((t) => [t.key, pubs.filter((p) => p.data.themes.includes(t.key)).length]),
+);
+const statusCounts = {
+  published: pubs.filter((p) => statusGroup(p.data.status) === 'published').length,
+  review: pubs.filter((p) => statusGroup(p.data.status) === 'review').length,
+};
+---
+
+<Base
+  title="Publications"
+  description={`Publications by ${site.name}: Higher Criticism, vertex hunting and successive projection, topic-aware Bradley–Terry–Luce ranking, and statistical detection of AI-generated text.`}
+>
+  <header class="page-head wrap grid-12">
+    <p class="eyebrow page-head__eyebrow"><a class="link" href="/">Home</a> / Publications</p>
+    <h1 class="page-head__title">Publications</h1>
+    <p class="page-head__lede">
+      {pubs.length} papers, newest first. Filter by theme or status; <span class="mono">⌘K</span> jumps to any paper.
+      Also on <a class="link" href={site.links.scholar} rel="noopener">Google Scholar</a>.
+    </p>
+  </header>
+
+  <section class="wrap grid-12 pubs-page" aria-label="Publication list">
+    <div class="filters" role="group" aria-label="Filter publications" data-filters>
+      <div class="filters__row">
+        <span class="eyebrow filters__label" id="f-theme">Theme</span>
+        <div class="chips" role="group" aria-labelledby="f-theme">
+          <button class="chip" type="button" data-filter="theme" data-value="all" aria-pressed="true">
+            All <span class="chip__n">{pubs.length}</span>
+          </button>
+          {
+            themes.map((t) => (
+              <button class="chip" type="button" data-filter="theme" data-value={t.key} aria-pressed="false">
+                {t.short} <span class="chip__n">{themeCounts[t.key]}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="filters__row">
+        <span class="eyebrow filters__label" id="f-status">Status</span>
+        <div class="chips" role="group" aria-labelledby="f-status">
+          <button class="chip" type="button" data-filter="status" data-value="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-filter="status" data-value="published" aria-pressed="false">
+            Published &amp; accepted <span class="chip__n">{statusCounts.published}</span>
+          </button>
+          <button class="chip" type="button" data-filter="status" data-value="review" aria-pressed="false">
+            Under review <span class="chip__n">{statusCounts.review}</span>
+          </button>
+        </div>
+      </div>
+      <p class="filters__status mono" aria-live="polite" data-filter-status></p>
+    </div>
+
+    <div class="years">
+      {
+        years.map((y) => (
+          <section class="year" data-year={y} aria-labelledby={`y-${y}`}>
+            <h2 class="year__label" id={`y-${y}`}>
+              {y}
+            </h2>
+            <div class="year__list">
+              {pubs
+                .filter((p) => p.data.year === y)
+                .map((p, i) => (
+                  <PubRow pub={p} showThemes index={i} />
+                ))}
+            </div>
+          </section>
+        ))
+      }
+      <p class="empty" data-empty hidden>
+        No papers match these filters. <button class="link empty__reset" type="button" data-filter-reset>Clear filters</button>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  type Filters = { theme: string; status: string };
+  const state: Filters = { theme: 'all', status: 'all' };
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+  const rows = Array.from(document.querySelectorAll<HTMLElement>('.pub'));
+  const years = Array.from(document.querySelectorAll<HTMLElement>('[data-year]'));
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+  const status = document.querySelector<HTMLElement>('[data-filter-status]');
+
+  function apply(push = true) {
+    let shown = 0;
+    for (const r of rows) {
+      const okTheme = state.theme === 'all' || (r.dataset.themes ?? '').split(' ').includes(state.theme);
+      const okStatus = state.status === 'all' || r.dataset.status === state.status;
+      const ok = okTheme && okStatus;
+      r.hidden = !ok;
+      if (ok) {
+        shown++;
+        r.classList.add('is-in'); // never leave a filtered-in row invisible
+      }
+    }
+    for (const y of years) y.hidden = !y.querySelector('.pub:not([hidden])');
+    if (empty) empty.hidden = shown > 0;
+    for (const c of chips) {
+      c.setAttribute('aria-pressed', String(state[c.dataset.filter as keyof Filters] === c.dataset.value));
+    }
+    if (status) {
+      const filtered = state.theme !== 'all' || state.status !== 'all';
+      status.textContent = filtered ? `Showing ${shown} of ${rows.length}` : '';
+    }
+    if (push) {
+      const url = new URL(location.href);
+      for (const k of ['theme', 'status'] as const) {
+        state[k] === 'all' ? url.searchParams.delete(k) : url.searchParams.set(k, state[k]);
+      }
+      history.replaceState(null, '', url);
+    }
+  }
+
+  chips.forEach((c) =>
+    c.addEventListener('click', () => {
+      state[c.dataset.filter as keyof Filters] = c.dataset.value!;
+      apply();
+    }),
+  );
+  document.querySelector('[data-filter-reset]')?.addEventListener('click', () => {
+    state.theme = 'all';
+    state.status = 'all';
+    apply();
+  });
+
+  // Initial state from the URL (?theme=ranking&status=review).
+  const params = new URLSearchParams(location.search);
+  const valid = (k: keyof Filters, v: string | null) =>
+    !!v && chips.some((c) => c.dataset.filter === k && c.dataset.value === v);
+  if (valid('theme', params.get('theme'))) state.theme = params.get('theme')!;
+  if (valid('status', params.get('status'))) state.status = params.get('status')!;
+  apply(false);
+
+  // Arriving at #paper: make sure it isn't filtered out, then highlight it briefly.
+  function flashHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const el = id ? document.getElementById(id) : null;
+    if (!el || !el.classList.contains('pub')) return;
+    if (el.hidden) {
+      state.theme = 'all';
+      state.status = 'all';
+      apply();
+      el.scrollIntoView({ block: 'start' });
+    }
+    el.classList.add('is-in', 'is-flash');
+    setTimeout(() => el.classList.remove('is-flash'), 1800);
+  }
+  flashHash();
+  addEventListener('hashchange', flashHash);
+  document.addEventListener('cmdk:target', (e) => {
+    const el = e.target as HTMLElement;
+    if (!el.classList.contains('pub')) return;
+    el.classList.add('is-in', 'is-flash');
+    setTimeout(() => el.classList.remove('is-flash'), 1800);
+  });
+</script>
+
+<style>
+  .page-head {
+    padding-block: var(--space-xl) var(--space-l);
+  }
+
+  .page-head > * {
+    grid-column: 1 / -1;
+  }
+
+  .page-head__eyebrow .link {
+    color: var(--ink-3);
+  }
+
+  .page-head__title {
+    font-size: var(--step-hero);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    margin: var(--space-s) 0 var(--space-m) -0.04em;
+  }
+
+  .page-head__lede {
+    max-width: 52ch;
+    color: var(--ink-2);
+    font-size: var(--step-1);
+  }
+
+  .pubs-page {
+    padding-bottom: var(--space-3xl);
+  }
+
+  .filters {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-s);
+    padding-block: var(--space-m);
+    border-top: 1px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .filters__row {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .filters__label {
+    padding-top: 0.5rem;
+  }
+
+  .filters__status {
+    color: var(--ink-3);
+    min-height: 1.4em;
+    font-size: var(--step--2);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.25rem;
+    padding-inline: 0.8rem;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    transition:
+      color var(--dur-fast),
+      border-color var(--dur-fast),
+      background-color var(--dur-fast);
+  }
+
+  .chip:hover {
+    color: var(--ink);
+    border-color: var(--rule-strong);
+  }
+
+  .chip[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .chip__n {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    opacity: 0.75;
+  }
+
+  .years {
+    grid-column: 1 / -1;
+  }
+
+  .year {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--col-gap);
+    padding-block: var(--space-m);
+  }
+
+  .year + .year {
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .year__label {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-mono);
+    color: var(--accent);
+    padding-top: var(--space-m);
+  }
+
+  .empty {
+    padding-block: var(--space-xl);
+    color: var(--ink-2);
+  }
+
+  .empty__reset {
+    border: 0;
+    background-image: linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--rule-strong), var(--rule-strong));
+    background-color: transparent;
+    padding: 0 0 1px;
+  }
+
+  @media (min-width: 960px) {
+    .filters {
+      grid-template-columns: 1fr;
+    }
+
+    .filters__row {
+      grid-template-columns: 6rem minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .year {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .year__label {
+      grid-column: 1 / span 2;
+      position: sticky;
+      top: calc(var(--nav-h) + var(--space-m));
+      align-self: start;
+      font-family: var(--font-display);
+      font-size: var(--step-4);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      padding-top: var(--space-s);
+    }
+
+    .year__list {
+      grid-column: 3 / -1;
+    }
+  }
+
+  @media print {
+    :global(.grain),
+    :global(.page-grid),
+    :global(.scroll-progress),
+    :global(.toast),
+    :global(.skip-link),
+    .filters,
+    .empty {
+      display: none !important;
+    }
+
+    :global(html),
+    :global(body) {
+      background: #fff !important;
+      color: #000 !important;
+      font-size: 10pt;
+      min-height: 0 !important;
+    }
+
+    .page-head,
+    .pubs-page,
+    .years {
+      display: block;
+      padding-bottom: 0;
+    }
+
+    .page-head {
+      padding: 0 var(--gutter) 12pt;
+    }
+
+    .page-head__eyebrow,
+    .page-head__lede {
+      display: none;
+    }
+
+    .page-head__title {
+      font-size: 28pt;
+      margin: 0;
+    }
+
+    .year {
+      display: block;
+      padding: 6pt 0;
+    }
+
+    .year__label {
+      position: static;
+      font-size: 14pt;
+      color: #000;
+    }
+
+    :global(.pub[hidden]),
+    :global(.year[hidden]) {
+      display: block !important;
+    }
+  }
+</style>
