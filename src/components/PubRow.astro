@@ -54,7 +54,7 @@ const pending = data.status !== 'published';
       }
     </p>
     <p class="pub__where">
-      {data.venueFull ?? data.venue}{review ? ' — under review' : ''}, {data.year}
+      {review ? `Under review at ${/^(Journal|Annals)\b/.test(data.venueFull ?? data.venue) ? 'the ' : ''}` : ''}{data.venueFull ?? data.venue}, {data.year}
       {
         showThemes && (
           <span class="pub__themes">

@@ -5,7 +5,7 @@ authors: ["Z. T. Ke", "G. Moryoussef", "Y. Tao", "J. Jin"]
 year: 2026
 date: 2026-01-01
 venue: "JASA"
-venueFull: "Journal of the American Statistical Association"
+venueFull: "Journal of the American Statistical Association (JASA)"
 status: under-review
 themes: [ranking, llm]
 featured: true
