@@ -64,10 +64,10 @@ const smooth = (x: number) => {
 /** Structure level m ∈ [0,1] over one loop: rest, organise, hold, relax. */
 function structureAt(t: number): number {
   const u = (t % PERIOD) / PERIOD;
-  if (u < 0.2) return 0;
-  if (u < 0.45) return smooth((u - 0.2) / 0.25);
-  if (u < 0.75) return 1;
-  return 1 - smooth((u - 0.75) / 0.25);
+  if (u < 0.18) return 0; // noise
+  if (u < 0.34) return smooth((u - 0.18) / 0.16); // forming (~3s)
+  if (u < 0.74) return 1; // holding, vertices pulse
+  return 1 - smooth((u - 0.74) / 0.26); // dissolving
 }
 
 export type EngineState = {
@@ -426,7 +426,7 @@ export function createLoop(engine: Engine, onHud: (s: string) => void) {
   const caf: (id: number) => void =
     typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame.bind(globalThis) : (id) => clearTimeout(id);
 
-  let clock = PERIOD * 0.12; // start in the noise phase
+  let clock = PERIOD * 0.165; // start just before the simplex begins to form
   let running = false;
   let last = 0;
   let id = 0;
