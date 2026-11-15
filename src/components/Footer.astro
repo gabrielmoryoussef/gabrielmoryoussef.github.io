@@ -2,9 +2,7 @@
 import Mark from './Mark.astro';
 import { site } from '@/data/site';
 
-const built = new Date();
-const year = built.getFullYear();
-const stamp = built.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
@@ -13,9 +11,6 @@ const stamp = built.toLocaleDateString('en-US', { month: 'short', year: 'numeric
       <Mark size={16} />
       <span>© {year} {site.name}</span>
     </div>
-    <p class="footer__colophon">
-      Set in Instrument Serif, Inter &amp; JetBrains Mono. Updated {stamp}.
-    </p>
     <a class="footer__top link" href="#main">Back to top ↑</a>
   </div>
 </footer>
@@ -45,9 +40,6 @@ const stamp = built.toLocaleDateString('en-US', { month: 'short', year: 'numeric
     color: var(--ink-2);
   }
 
-  .footer__colophon {
-    flex: 1 1 18rem;
-  }
 
   .footer__top {
     color: var(--ink-2);
