@@ -19,7 +19,7 @@ export const site = {
     'Gabriel Moryoussef — statistician working on high-dimensional inference with rare signals and latent structure: Higher Criticism, vertex hunting, ranking models, and detecting AI-generated text. PhD, Carnegie Mellon University.',
   /** Split so the address is never present verbatim in the HTML. */
   email: { user: 'gmoryous', domain: 'andrew.cmu.edu' },
-  location: 'Pittsburgh, PA',
+  location: 'Berkeley, CA',
   links: {
     cv: '/uploads/resume.pdf',
     scholar: 'https://scholar.google.com/citations?user=kUQryMEAAAAJ&hl=en',
